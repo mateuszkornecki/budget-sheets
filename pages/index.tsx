@@ -1,40 +1,18 @@
 import Head from 'next/head';
-import { useMutation, useQuery } from 'react-query';
-import { Button } from '@material-ui/core';
-
-import {
-	ExpenseCategories,
-	Expense,
-	getAllExpenses,
-	postExpense,
-	getFilteredExpenses,
-} from '../api/expenses';
 
 import styles from '../styles/Home.module.css';
-
-const expense: Expense = {
-	category: ExpenseCategories.Food,
-	subcategory: 'test',
-	comment: 'any',
-	createdAt: new Date().toISOString(),
-};
+import { ExpenseForm } from '../components/ExpenseForm';
 
 function Home() {
-	const { isLoading, isError, data, error } = useQuery('filteredExpenses', () =>
-		getFilteredExpenses({ filter: 'createdAt', value: '2021-05' })
-	);
+	// const { isLoading, isError, data, error } = useQuery('filteredExpenses', () =>
+	// 	getFilteredExpenses({ filter: 'createdAt', value: '2021-05' })
+	// );
 
-	const content = isLoading ? (
-		<p>Loading...</p>
-	) : (
-		data.map((expense) => <p>{expense.createdAt}</p>)
-	);
-
-	const mutation = useMutation((expense: Expense) => postExpense(expense));
-
-	function handleClick() {
-		mutation.mutate(expense);
-	}
+	// const content = isLoading ? (
+	// 	<p>Loading...</p>
+	// ) : (
+	// 	data.map((expense) => <p>{expense.createdAt}</p>)
+	// );
 
 	return (
 		<div className={styles.container}>
@@ -44,8 +22,7 @@ function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main>
-				<Button onClick={handleClick}>Post expense</Button>
-				{content}
+				<ExpenseForm />
 			</main>
 		</div>
 	);

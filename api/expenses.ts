@@ -1,33 +1,31 @@
-enum ExpenseCategories {
-	Food = 'FOOD',
-	Sport = 'SPORT',
-}
+import { TCategories } from '../constanst/Categories';
 
-interface Expense {
-	createdAt: string;
-	category: ExpenseCategories;
-	subcategory: string;
+interface IExpense {
+	date: string;
+	price: number;
+	category: TCategories;
+	subcategory?: string;
 	comment: string;
 }
 
-interface ExpenseFilters {
-	filter: keyof Expense;
+interface IExpenseFilters {
+	filter: keyof IExpense;
 	value: string;
 }
 
-function getFilteredExpenses({ filter, value }: ExpenseFilters): Promise<Expense[]> {
+function getFilteredExpenses({ filter, value }: IExpenseFilters): Promise<IExpense[]> {
 	return fetch(
 		`${process.env.NEXT_PUBLIC_SHEET_BEST_URL}/tabs/Expenses/${filter}/${value}*`
 	).then((response) => response.json());
 }
 
-function getAllExpenses(): Promise<Expense[]> {
+function getAllExpenses(): Promise<IExpense[]> {
 	return fetch(`${process.env.NEXT_PUBLIC_SHEET_BEST_URL}/tabs/Expenses`).then(
 		(response) => response.json()
 	);
 }
 
-function postExpense(expense: Expense): Promise<Expense[]> {
+function postExpense(expense: IExpense): Promise<IExpense[]> {
 	return fetch(`${process.env.NEXT_PUBLIC_SHEET_BEST_URL}/tabs/Expenses`, {
 		method: 'POST',
 		mode: 'cors',
@@ -38,5 +36,5 @@ function postExpense(expense: Expense): Promise<Expense[]> {
 	}).then((response) => response.json());
 }
 
-export type { Expense };
-export { getFilteredExpenses, getAllExpenses, postExpense, ExpenseCategories };
+export type { IExpense };
+export { getFilteredExpenses, getAllExpenses, postExpense };
