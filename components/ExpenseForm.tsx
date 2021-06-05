@@ -96,7 +96,7 @@ export function ExpenseForm() {
 						{categoriesArray.map(renderMenuItem)}
 					</TextField>
 				</Grid>
-				{Categories[formik.values.category].subcategories.length ? (
+				{Categories[formik.values.category]?.subcategories?.length ? (
 					<Grid item>
 						<TextField
 							fullWidth
