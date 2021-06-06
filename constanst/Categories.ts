@@ -31,7 +31,7 @@ const Categories = {
 
 const categoriesArray = Object.values(Categories).map((category) => category.value);
 
-export type TCategories = typeof categoriesArray[number];
+export type TCategoriesValues = typeof categoriesArray[number];
 
 function getSubcategory(category: keyof typeof Categories) {
 	return Categories[category].subcategories;

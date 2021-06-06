@@ -1,9 +1,9 @@
-import { TCategories } from '../constanst/Categories';
+import { TCategoriesValues } from '../constanst/Categories';
 
 interface IExpense {
 	date: string;
-	price: number;
-	category: TCategories;
+	price: number | string;
+	category: TCategoriesValues;
 	subcategory?: string;
 	comment: string;
 }

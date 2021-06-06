@@ -2,10 +2,12 @@ import { useMutation } from 'react-query';
 import { useFormik } from 'formik';
 import { format } from 'date-fns';
 import * as yup from 'yup';
-import { Button, TextField, MenuItem, Grid } from '@material-ui/core';
+import { Button, Grid, TextField, CircularProgress, makeStyles } from '@material-ui/core';
 
-import { IExpense, postExpense } from '../api/expenses';
-import Categories, { categoriesArray } from '../constanst/Categories';
+import { IExpense, postExpense } from '../../api/expenses';
+import Categories, { categoriesArray } from '../../constanst/Categories';
+import { Subcategories } from './components/SubcategoriesField';
+import { renderMenuItem } from './utils/renderMenuItem';
 
 const validationSchema = yup.object({
 	date: yup.string().required('Transaction date is required!'),
@@ -15,13 +17,11 @@ const validationSchema = yup.object({
 	comment: yup.string().notRequired(),
 });
 
-function renderMenuItem(item) {
-	return (
-		<MenuItem key={item} value={item}>
-			{item}
-		</MenuItem>
-	);
-}
+const useStyles = makeStyles({
+	loadingSpinner: {
+		marginLeft: '1rem',
+	},
+});
 
 export function ExpenseForm() {
 	const mutation = useMutation((expense: IExpense) => postExpense(expense));
@@ -36,11 +36,13 @@ export function ExpenseForm() {
 		},
 		validationSchema: validationSchema,
 		onSubmit: (expense, formProps) => {
-			console.log('ex', expense);
+			console.log(expense);
 			mutation.mutate(expense);
 			formProps.resetForm();
 		},
 	});
+
+	const styles = useStyles();
 
 	return (
 		<form onSubmit={formik.handleSubmit}>
@@ -73,7 +75,7 @@ export function ExpenseForm() {
 						name='price'
 						label='Price'
 						variant='outlined'
-						InputProps={{ inputProps: { min: 0, step: 5 } }}
+						InputProps={{ inputProps: { min: 0, step: 1 } }}
 						value={formik.values.price}
 						onChange={formik.handleChange}
 						error={formik.touched.price && Boolean(formik.errors.price)}
@@ -96,31 +98,15 @@ export function ExpenseForm() {
 						{categoriesArray.map(renderMenuItem)}
 					</TextField>
 				</Grid>
-				{Categories[formik.values.category]?.subcategories?.length ? (
-					<Grid item>
-						<TextField
-							fullWidth
-							id='subcategory'
-							select
-							name='subcategory'
-							label='Subcategory'
-							variant='outlined'
-							value={formik.values.subcategory}
-							onChange={formik.handleChange}
-							error={
-								formik.touched.subcategory &&
-								Boolean(formik.errors.subcategory)
-							}
-							helperText={
-								formik.touched.subcategory && formik.errors.subcategory
-							}
-						>
-							{Categories[formik.values.category].subcategories.map(
-								renderMenuItem
-							)}
-						</TextField>
-					</Grid>
-				) : null}
+				<Subcategories
+					categoryValue={formik.values.category}
+					value={formik.values.subcategory}
+					onChange={formik.handleChange}
+					error={
+						formik.touched.subcategory && Boolean(formik.errors.subcategory)
+					}
+					helperText={formik.touched.subcategory && formik.errors.subcategory}
+				/>
 				<Grid item>
 					<TextField
 						fullWidth
@@ -128,6 +114,8 @@ export function ExpenseForm() {
 						name='comment'
 						label='Comment'
 						variant='outlined'
+						multiline
+						rows={2}
 						value={formik.values.comment}
 						onChange={formik.handleChange}
 						error={formik.touched.comment && Boolean(formik.errors.comment)}
@@ -138,10 +126,16 @@ export function ExpenseForm() {
 					<Button
 						disabled={mutation.isLoading}
 						color='primary'
-						variant='contained'
+						variant='outlined'
 						type='submit'
 					>
 						Add
+						{mutation.isLoading ? (
+							<CircularProgress
+								className={styles.loadingSpinner}
+								size={20}
+							/>
+						) : null}
 					</Button>
 				</Grid>
 			</Grid>
