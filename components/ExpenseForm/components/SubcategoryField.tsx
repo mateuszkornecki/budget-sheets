@@ -5,11 +5,11 @@ import Categories, { TCategoriesValues } from '../../../constanst/Categories';
 
 import { renderMenuItem } from '../utils/renderMenuItem';
 
-type TSubcategoriesProps = {
+type TSubcategoryFieldProps = {
 	categoryValue: TCategoriesValues;
 } & TextFieldProps;
 
-export function SubcategoriesField(props: TSubcategoriesProps) {
+export function SubcategoryField(props: TSubcategoryFieldProps) {
 	const { categoryValue, value, onChange, error, helperText } = props;
 	const categoryObject = Object.values(Categories).find(
 		(category) => category.value === categoryValue

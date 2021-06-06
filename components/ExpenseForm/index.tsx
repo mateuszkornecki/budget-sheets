@@ -6,7 +6,7 @@ import { Button, Grid, TextField, CircularProgress, makeStyles } from '@material
 
 import { IExpense, postExpense } from '../../api/expenses';
 import Categories, { categoriesArray } from '../../constanst/Categories';
-import { Subcategories } from './components/SubcategoriesField';
+import { SubcategoryField } from './components/SubcategoryField';
 import { renderMenuItem } from './utils/renderMenuItem';
 
 const validationSchema = yup.object({
@@ -98,7 +98,7 @@ export function ExpenseForm() {
 						{categoriesArray.map(renderMenuItem)}
 					</TextField>
 				</Grid>
-				<Subcategories
+				<SubcategoryField
 					categoryValue={formik.values.category}
 					value={formik.values.subcategory}
 					onChange={formik.handleChange}
