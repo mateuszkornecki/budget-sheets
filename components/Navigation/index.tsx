@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
 
 export function Navigation() {
-	const [value, setValue] = useState(0);
 	const router = useRouter();
+	const [value, setValue] = useState(router.pathname);
 
 	return (
 		<footer>
@@ -19,9 +19,9 @@ export function Navigation() {
 					showLabels
 				>
 					<BottomNavigationAction label='Expense' value={'/'} />
-					<BottomNavigationAction label='Prediction' value={'prediction'} />
-					<BottomNavigationAction label='Income' value={'income'} />
-					<BottomNavigationAction label='Stats' value={'stats'} />
+					<BottomNavigationAction label='Prediction' value={'/prediction'} />
+					<BottomNavigationAction label='Income' value={'/income'} />
+					<BottomNavigationAction label='Stats' value={'/stats'} />
 				</BottomNavigation>
 			</nav>
 		</footer>
