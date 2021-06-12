@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, Fragment } from 'react';
 import { Container, Grid, makeStyles } from '@material-ui/core';
 import { Navigation } from '../Navigation';
 
@@ -20,20 +20,5 @@ export function PageLayout(props: IPageLayoutProps) {
 	const { children } = props;
 	const styles = useStyles();
 
-	return (
-		<Container maxWidth='sm' className={styles.root}>
-			<Grid
-				container
-				direction='column'
-				justify='space-between'
-				alignItems='stretch'
-				className={styles.root}
-			>
-				{React.Children.map(children, renderChildren)}
-				<Grid item>
-					<Navigation />
-				</Grid>
-			</Grid>
-		</Container>
-	);
+	return <Fragment>{React.Children.map(children, renderChildren)}</Fragment>;
 }

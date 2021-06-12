@@ -51,6 +51,7 @@ export function ExpenseForm() {
 					direction='column'
 					justify='flex-start'
 					alignItems='stretch'
+					wrap='nowrap'
 					spacing={2}
 				>
 					<Grid item>
