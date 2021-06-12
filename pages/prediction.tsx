@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { Fragment } from 'react';
 import { PageLayout } from '../components/PageLayout';
 import { Title } from '../components/Title';
+import { PredictionsForm } from '../components/PredictionForm';
 
 function AddPredictionPage() {
 	return (
@@ -13,7 +14,7 @@ function AddPredictionPage() {
 			</Head>
 			<PageLayout>
 				<Title title={'Add prediction'} />
-				<main>todo</main>
+				<PredictionsForm />
 			</PageLayout>
 		</Fragment>
 	);

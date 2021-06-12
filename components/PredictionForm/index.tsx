@@ -1,12 +1,17 @@
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useFormik } from 'formik';
-import { format, add } from 'date-fns';
+import { format, add, addYears } from 'date-fns';
 import * as yup from 'yup';
 import { Button, Grid, TextField, CircularProgress, makeStyles } from '@material-ui/core';
+import DateFnsUtils from '@date-io/date-fns'; // choose your lib
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 import Categories, { categoriesArray } from '../../constanst/Categories';
-import { renderMenuItem } from './utils/renderMenuItem';
-import { IPrediction, postPrediction } from '../../api/predictions.ts';
+import {
+	getFilteredPredictions,
+	IPrediction,
+	postPrediction,
+} from '../../api/predictions.ts';
 
 const validationSchema = yup.object({
 	date: yup.string().required('Transaction date is required!'),
@@ -20,22 +25,47 @@ const useStyles = makeStyles({
 	},
 });
 
-const nextMonth = add(new Date(), { months: 1 });
+function capitalizeFirstLetter(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const categories = categoriesArray.map((category) => category.toLowerCase());
 
 export function PredictionsForm() {
+	const { isSuccess, isLoading, isError, data, error } = useQuery(
+		'filteredExpenses',
+		() =>
+			getFilteredPredictions({
+				filter: 'period',
+				value: format(new Date(), 'yyyy-MM'),
+			})
+	);
+
+	const content = isLoading ? (
+		<p>Loading...</p>
+	) : (
+		data.map((expense) => <p>{expense.createdAt}</p>)
+	);
 	const mutation = useMutation((expense: IPrediction) => postPrediction(expense));
 
 	const formik = useFormik({
 		initialValues: {
-			date: format(nextMonth, 'yyyy-MM-dd'),
-			price: 0,
-			category: Categories.Food.value,
+			period: format(new Date(), 'yyyy-MM'),
+			...categories.reduce((x, y) => ((x[y] = 0), x), {}),
 		},
-		validationSchema: validationSchema,
+		//validationSchema: validationSchema,
 		onSubmit: (prediction, formProps) => {
-			console.log(prediction);
-			mutation.mutate(prediction);
-			formProps.resetForm();
+			if (isSuccess) {
+				console.log(prediction);
+				console.log(data);
+				if (data.length === 0) {
+					mutation.mutate(prediction);
+				} else {
+					// TODO: PATH/PUT instead of POST
+				}
+
+				formProps.resetForm();
+			}
 		},
 	});
 
@@ -52,52 +82,47 @@ export function PredictionsForm() {
 					spacing={2}
 				>
 					<Grid item>
-						<TextField
-							fullWidth
-							id='date'
-							type='date'
-							name='date'
-							label='Transaction date'
-							variant='outlined'
-							value={formik.values.date}
-							onChange={formik.handleChange}
-							error={formik.touched.date && Boolean(formik.errors.date)}
-							helperText={formik.touched.date && formik.errors.date}
-						/>
+						<MuiPickersUtilsProvider utils={DateFnsUtils}>
+							<DatePicker
+								fullWidth
+								inputVariant='outlined'
+								views={['year', 'month']}
+								label='Period'
+								minDate={new Date()}
+								maxDate={addYears(new Date(), 1)}
+								value={formik.values.period}
+								onChange={(date) => {
+									formik.setFieldValue('date', format(date, 'yyyy-MM'));
+								}}
+								error={
+									formik.touched.period && Boolean(formik.errors.period)
+								}
+								helperText={formik.touched.period && formik.errors.period}
+							/>
+						</MuiPickersUtilsProvider>
 					</Grid>
-					<Grid item>
-						<TextField
-							fullWidth
-							id='price'
-							type='number'
-							name='price'
-							label='Price'
-							variant='outlined'
-							InputProps={{ inputProps: { min: 0, step: 1 } }}
-							value={formik.values.price}
-							onChange={formik.handleChange}
-							error={formik.touched.price && Boolean(formik.errors.price)}
-							helperText={formik.touched.price && formik.errors.price}
-						/>
-					</Grid>
-					<Grid item>
-						<TextField
-							fullWidth
-							id='category'
-							select
-							name='category'
-							label='Category'
-							variant='outlined'
-							value={formik.values.category}
-							onChange={formik.handleChange}
-							error={
-								formik.touched.category && Boolean(formik.errors.category)
-							}
-							helperText={formik.touched.category && formik.errors.category}
-						>
-							{categoriesArray.map(renderMenuItem)}
-						</TextField>
-					</Grid>
+					{categories.map((category) => (
+						<Grid item key={category}>
+							<TextField
+								fullWidth
+								id={category}
+								type='number'
+								name={category}
+								label={capitalizeFirstLetter(category)}
+								variant='outlined'
+								InputProps={{ inputProps: { min: 0, step: 1 } }}
+								value={formik.values[category]}
+								onChange={formik.handleChange}
+								error={
+									formik.touched[category] &&
+									Boolean(formik.errors[category])
+								}
+								helperText={
+									formik.touched[category] && formik.errors[category]
+								}
+							/>
+						</Grid>
+					))}
 					<Grid container item justify='center'>
 						<Button
 							disabled={mutation.isLoading}
