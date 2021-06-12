@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps }) {
 						direction='column'
 						justify='space-between'
 						alignItems='stretch'
-						className={muiStyles.root}
+						classes={{ root: muiStyles.root }}
 					>
 						<Component {...pageProps} />
 						<Grid item>
