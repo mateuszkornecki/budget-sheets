@@ -7,24 +7,17 @@ import '../styles/globals.css';
 
 const queryClient = new QueryClient();
 
-const useStyles = makeStyles({
-	root: {
-		height: '100%',
-	},
-});
-
 function MyApp({ Component, pageProps }) {
-	const muiStyles = useStyles();
 	return (
 		<QueryClientProvider client={queryClient}>
-			<Container maxWidth='sm' className={muiStyles.root}>
+			<Container maxWidth='sm'>
 				<div className={styles.container}>
 					<Grid
 						container
 						direction='column'
 						justify='space-between'
 						alignItems='stretch'
-						classes={{ root: muiStyles.root }}
+						className={styles.muiGrid}
 					>
 						<Component {...pageProps} />
 						<Grid item>
