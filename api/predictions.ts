@@ -1,9 +1,12 @@
-import { TCategoriesValues } from '../constanst/Categories';
-
 interface IPrediction {
-	date: string;
-	price: number | string;
-	category: TCategoriesValues;
+	period: string;
+	jedzonko: string;
+	oszczędności: string;
+	mieszkanie: string;
+	sport: string;
+	samochód: string;
+	usługi: string;
+	inne: string;
 }
 
 interface IPredictionFilters {
@@ -26,19 +29,34 @@ function getAllPredictions(): Promise<IPrediction[]> {
 	);
 }
 
-function postPrediction(expense: IPrediction): Promise<IPrediction[]> {
+function postPrediction(prediction: IPrediction): Promise<IPrediction[]> {
 	return fetch(`${process.env.NEXT_PUBLIC_SHEET_BEST_URL}/tabs/Predictions`, {
 		method: 'POST',
 		mode: 'cors',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(expense),
+		body: JSON.stringify(prediction),
 	}).then((response) => {
-		console.log('reso', response);
+		return response.json();
+	});
+}
+
+function updatePrediction(prediction: IPrediction): Promise<IPrediction> {
+	return fetch(
+		`${process.env.NEXT_PUBLIC_SHEET_BEST_URL}/tabs/Predictions/period/2021*`,
+		{
+			method: 'PATCH',
+			mode: 'cors',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(prediction),
+		}
+	).then((response) => {
 		return response.json();
 	});
 }
 
 export type { IPrediction };
-export { getFilteredPredictions, getAllPredictions, postPrediction };
+export { getFilteredPredictions, getAllPredictions, postPrediction, updatePrediction };
