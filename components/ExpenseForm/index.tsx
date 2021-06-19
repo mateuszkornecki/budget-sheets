@@ -5,14 +5,16 @@ import * as yup from 'yup';
 import { Button, Grid, TextField, CircularProgress, makeStyles } from '@material-ui/core';
 
 import { IExpense, postExpense } from '../../api/expenses';
-import Categories, { categoriesArray } from '../../constanst/Categories';
+import ExpensesCategories, {
+	expensesCategoriesArray,
+} from '../../constanst/ExpensesCategories';
 import { SubcategoryField } from './components/SubcategoryField';
 import { renderMenuItem } from './utils/renderMenuItem';
 
 const validationSchema = yup.object({
 	date: yup.string().required('Transaction date is required!'),
 	price: yup.number().required('Price is required!').positive().min(0),
-	category: yup.mixed().oneOf(categoriesArray).required('Category is required'),
+	category: yup.mixed().oneOf(expensesCategoriesArray).required('Category is required'),
 	subcategory: yup.string().notRequired(),
 	comment: yup.string().notRequired(),
 });
@@ -30,7 +32,7 @@ export function ExpenseForm() {
 		initialValues: {
 			date: format(new Date(), 'yyyy-MM-dd'),
 			price: 0,
-			category: Categories.Food.value,
+			category: ExpensesCategories.Food.value,
 			subcategory: '',
 			comment: '',
 		},
@@ -98,7 +100,7 @@ export function ExpenseForm() {
 							}
 							helperText={formik.touched.category && formik.errors.category}
 						>
-							{categoriesArray.map(renderMenuItem)}
+							{expensesCategoriesArray.map(renderMenuItem)}
 						</TextField>
 					</Grid>
 					<SubcategoryField

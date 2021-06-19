@@ -1,4 +1,4 @@
-const Categories = {
+const ExpensesCategories = {
 	Food: {
 		value: 'Jedzonko',
 		subcategories: ['Essential', 'Pleasure'],
@@ -29,13 +29,15 @@ const Categories = {
 	},
 } as const;
 
-const categoriesArray = Object.values(Categories).map((category) => category.value);
+const expensesCategoriesArray = Object.values(ExpensesCategories).map(
+	(category) => category.value
+);
 
-export type TCategoriesValues = typeof categoriesArray[number];
+export type TCategoriesValues = typeof expensesCategoriesArray[number];
 
-function getSubcategory(category: keyof typeof Categories) {
-	return Categories[category].subcategories;
+function getExpenseSubcategory(category: keyof typeof ExpensesCategories) {
+	return ExpensesCategories[category].subcategories;
 }
 
-export default Categories;
-export { getSubcategory, categoriesArray };
+export default ExpensesCategories;
+export { getExpenseSubcategory, expensesCategoriesArray };

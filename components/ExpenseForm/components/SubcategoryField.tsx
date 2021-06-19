@@ -1,7 +1,9 @@
 import { Grid, TextField } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField/TextField';
 
-import Categories, { TCategoriesValues } from '../../../constanst/Categories';
+import ExpensesCategories, {
+	TCategoriesValues,
+} from '../../../constanst/ExpensesCategories';
 
 import { renderMenuItem } from '../utils/renderMenuItem';
 
@@ -11,7 +13,7 @@ type TSubcategoryFieldProps = {
 
 export function SubcategoryField(props: TSubcategoryFieldProps) {
 	const { categoryValue, value, onChange, error, helperText } = props;
-	const categoryObject = Object.values(Categories).find(
+	const categoryObject = Object.values(ExpensesCategories).find(
 		(category) => category.value === categoryValue
 	);
 
