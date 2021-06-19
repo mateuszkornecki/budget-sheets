@@ -18,6 +18,7 @@ function MyApp({ Component, pageProps }) {
 						justify='space-between'
 						alignItems='stretch'
 						className={styles.muiGrid}
+						wrap='nowrap'
 					>
 						<Component {...pageProps} />
 						<Grid item>
