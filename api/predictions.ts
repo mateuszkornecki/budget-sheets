@@ -1,9 +1,12 @@
-import { TCategoriesValues } from '../constanst/Categories';
-
 interface IPrediction {
-	date: string;
-	price: number | string;
-	category: TCategoriesValues;
+	period: string;
+	jedzonko: string;
+	oszczędności: string;
+	mieszkanie: string;
+	sport: string;
+	samochód: string;
+	usługi: string;
+	inne: string;
 }
 
 interface IPredictionFilters {

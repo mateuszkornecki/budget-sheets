@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
 import { useFormik } from 'formik';
-import { format, add, addYears } from 'date-fns';
+import { format, addYears } from 'date-fns';
 import * as yup from 'yup';
 import { Button, Grid, TextField, CircularProgress, makeStyles } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
@@ -16,9 +16,14 @@ import {
 import React, { Fragment, useEffect, useState } from 'react';
 
 const validationSchema = yup.object({
-	date: yup.string().required('Transaction date is required!'),
-	price: yup.number().required('Price is required!').positive().min(1),
-	category: yup.mixed().oneOf(categoriesArray).required('Category is required'),
+	period: yup.string().required('Period is required!'),
+	jedzonko: yup.string().required('Jedzonko is required!'),
+	oszczędności: yup.string().required('Oszczędności is required!'),
+	mieszkanie: yup.string().required('Mieszkanie is required!'),
+	sport: yup.string().required('Sport is required!'),
+	samochód: yup.string().required('Samochód is required!'),
+	usługi: yup.string().required('Usługi is required!'),
+	inne: yup.string().required('Inne is required!'),
 });
 
 const useStyles = makeStyles({
@@ -61,17 +66,14 @@ export function PredictionsForm() {
 			...categories.reduce((x, y) => {
 				return (x[y] = data?.length ? Number(data[0][y]) : 0), x;
 			}, {}),
-		},
-		//validationSchema: validationSchema,
+		} as IPrediction,
+		validationSchema: validationSchema,
 		onSubmit: (prediction, formProps) => {
 			if (isSuccess) {
-				console.log(prediction);
 				if (data.length === 0) {
 					postMutation.mutate(prediction);
 				} else {
-					// TODO: PATH/PUT instead of POST
-					console.log(prediction, formik.values.period);
-					updateMutation.mutate(prediction, formik.values.period);
+					updateMutation.mutate(prediction);
 				}
 			}
 		},
@@ -141,8 +143,6 @@ export function PredictionsForm() {
 
 										console.log('setting new date');
 										setNewPeriod(format(date, 'yyyy-MM'));
-
-										//await refetch();
 									}}
 									error={
 										formik.touched.period &&
