@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { Fragment } from 'react';
 import { PageLayout } from '../components/PageLayout';
 import { Title } from '../components/Title';
+import { IncomeForm } from '../components/IncomeForm';
 
 function AddIncomePage() {
 	return (
@@ -13,7 +14,7 @@ function AddIncomePage() {
 			</Head>
 			<PageLayout>
 				<Title title={'Add incomes'} />
-				<main>todo</main>
+				<IncomeForm />
 			</PageLayout>
 		</Fragment>
 	);
