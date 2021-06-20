@@ -7,18 +7,24 @@ interface IPageLayoutProps {
 }
 
 const useStyles = makeStyles({
-	root: {
-		height: '100%',
+	main: {
+		overflow: 'auto',
+		paddingTop: '1rem',
+		paddingBottom: '1rem',
 	},
 });
 
-function renderChildren(child: ReactElement) {
-	return <Grid item>{child}</Grid>;
+function renderChildren(child: ReactElement, index: number) {
+	const styles = useStyles();
+	return (
+		<Grid item className={index === 1 ? styles.main : ''}>
+			{child}
+		</Grid>
+	);
 }
 
 export function PageLayout(props: IPageLayoutProps) {
 	const { children } = props;
-	const styles = useStyles();
 
 	return <Fragment>{React.Children.map(children, renderChildren)}</Fragment>;
 }

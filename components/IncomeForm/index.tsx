@@ -21,6 +21,9 @@ const useStyles = makeStyles({
 	loadingSpinner: {
 		marginLeft: '1rem',
 	},
+	form: {
+		padding: '0.5rem',
+	},
 });
 
 export function IncomeForm() {
@@ -43,7 +46,7 @@ export function IncomeForm() {
 
 	return (
 		<main>
-			<form onSubmit={formik.handleSubmit}>
+			<form onSubmit={formik.handleSubmit} className={styles.form}>
 				<Grid
 					container
 					direction='column'
