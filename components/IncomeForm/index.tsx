@@ -4,19 +4,17 @@ import { format } from 'date-fns';
 import * as yup from 'yup';
 import { Button, Grid, TextField, CircularProgress, makeStyles } from '@material-ui/core';
 
-import { IExpense, postExpense } from '../../api/expenses';
-import ExpensesCategories, {
-	expensesCategoriesArray,
-} from '../../constanst/ExpensesCategories';
-import { SubcategoryField } from './components/SubcategoryField';
-import { renderMenuItem } from './utils/renderMenuItem';
+import { IIncome, postIncome } from '../../api/incomes';
+import { renderMenuItem } from '../ExpenseForm/utils/renderMenuItem';
+import {
+	IncomesCategories,
+	incomesCategoriesArray,
+} from '../../constanst/IncomesCategories';
 
 const validationSchema = yup.object({
-	date: yup.string().required('Transaction date is required!'),
-	price: yup.number().required('Price is required!').positive().min(0),
-	category: yup.mixed().oneOf(expensesCategoriesArray).required('Category is required'),
-	subcategory: yup.string().notRequired(),
-	comment: yup.string().notRequired(),
+	date: yup.string().required('Date is required!'),
+	amount: yup.number().required('Amount is required!').positive().min(0),
+	category: yup.mixed().oneOf(incomesCategoriesArray).required('Category is required'),
 });
 
 const useStyles = makeStyles({
@@ -25,20 +23,18 @@ const useStyles = makeStyles({
 	},
 });
 
-export function ExpenseForm() {
-	const mutation = useMutation((expense: IExpense) => postExpense(expense));
+export function IncomeForm() {
+	const mutation = useMutation((income: IIncome) => postIncome(income));
 
 	const formik = useFormik({
 		initialValues: {
 			date: format(new Date(), 'yyyy-MM-dd'),
-			price: 0,
-			category: ExpensesCategories.Food.value,
-			subcategory: '',
-			comment: '',
+			amount: 0,
+			category: IncomesCategories.Wypłata,
 		},
 		validationSchema: validationSchema,
-		onSubmit: (expense, formProps) => {
-			mutation.mutate(expense);
+		onSubmit: (income, formProps) => {
+			mutation.mutate(income);
 			formProps.resetForm();
 		},
 	});
@@ -73,16 +69,16 @@ export function ExpenseForm() {
 					<Grid item>
 						<TextField
 							fullWidth
-							id='price'
+							id='amount'
 							type='number'
-							name='price'
-							label='Price'
+							name='amount'
+							label='Amount'
 							variant='outlined'
 							InputProps={{ inputProps: { min: 0, step: 1 } }}
-							value={formik.values.price}
+							value={formik.values.amount}
 							onChange={formik.handleChange}
-							error={formik.touched.price && Boolean(formik.errors.price)}
-							helperText={formik.touched.price && formik.errors.price}
+							error={formik.touched.amount && Boolean(formik.errors.amount)}
+							helperText={formik.touched.amount && formik.errors.amount}
 						/>
 					</Grid>
 					<Grid item>
@@ -100,37 +96,8 @@ export function ExpenseForm() {
 							}
 							helperText={formik.touched.category && formik.errors.category}
 						>
-							{expensesCategoriesArray.map(renderMenuItem)}
+							{incomesCategoriesArray.map(renderMenuItem)}
 						</TextField>
-					</Grid>
-					<SubcategoryField
-						categoryValue={formik.values.category}
-						value={formik.values.subcategory}
-						onChange={formik.handleChange}
-						error={
-							formik.touched.subcategory &&
-							Boolean(formik.errors.subcategory)
-						}
-						helperText={
-							formik.touched.subcategory && formik.errors.subcategory
-						}
-					/>
-					<Grid item>
-						<TextField
-							fullWidth
-							id='comment'
-							name='comment'
-							label='Comment'
-							variant='outlined'
-							multiline
-							rows={2}
-							value={formik.values.comment}
-							onChange={formik.handleChange}
-							error={
-								formik.touched.comment && Boolean(formik.errors.comment)
-							}
-							helperText={formik.touched.comment && formik.errors.comment}
-						/>
 					</Grid>
 					<Grid container item justify='center'>
 						<Button

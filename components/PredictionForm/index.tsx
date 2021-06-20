@@ -6,7 +6,9 @@ import { Button, Grid, TextField, CircularProgress, makeStyles } from '@material
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
-import Categories, { categoriesArray } from '../../constanst/Categories';
+import ExpensesCategories, {
+	expensesCategoriesArray,
+} from '../../constanst/ExpensesCategories';
 import {
 	getFilteredPredictions,
 	IPrediction,
@@ -36,7 +38,7 @@ function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const categories = categoriesArray.map((category) => category.toLowerCase());
+const categories = expensesCategoriesArray.map((category) => category.toLowerCase());
 
 export function PredictionsForm() {
 	const [newPeriod, setNewPeriod] = useState(format(new Date(), 'yyyy-MM'));

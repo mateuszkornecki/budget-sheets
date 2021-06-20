@@ -1,4 +1,4 @@
-import { TCategoriesValues } from '../constanst/Categories';
+import { TCategoriesValues } from '../constanst/ExpensesCategories';
 
 interface IExpense {
 	date: string;
