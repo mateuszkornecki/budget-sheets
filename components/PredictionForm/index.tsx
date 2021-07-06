@@ -23,7 +23,9 @@ const validationSchema = yup.object({
 	oszczędności: yup.string().required('Oszczędności is required!'),
 	mieszkanie: yup.string().required('Mieszkanie is required!'),
 	sport: yup.string().required('Sport is required!'),
-	samochód: yup.string().required('Samochód is required!'),
+	transport: yup.string().required('Transport is required!'),
+	zdrowie: yup.string().required('Zdrowie is required!'),
+	uroda: yup.string().required('Uroda is required!'),
 	usługi: yup.string().required('Usługi is required!'),
 	inne: yup.string().required('Inne is required!'),
 });
