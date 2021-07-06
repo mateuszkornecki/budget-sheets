@@ -7,17 +7,32 @@ const ExpensesCategories = {
 		value: 'Sport',
 		subcategories: ['Rower', 'Wspinaczka', 'Inne'],
 	},
-	Car: {
-		value: 'Samochód',
-		subcategories: ['Naprawy', 'Paliwo', 'Inne'],
+	Transport: {
+		value: 'Transport',
+		subcategories: ['Samochód', 'Inne'],
 	},
 	Services: {
 		value: 'Usługi',
 		subcategories: ['Telefon', 'Księgowa', 'Subskrybcje'],
 	},
+	Health: {
+		value: 'Zdrowie',
+		subcategories: ['Fizjoterapeuta', 'Endokrynolog', 'Lekarstwa', 'Inne'],
+	},
+	Beauty: {
+		value: 'Uroda',
+		subcategories: ['Kosmetyki', 'Fryzjer'],
+	},
 	Other: {
 		value: 'Inne',
-		subcategories: ['Prezenty', 'Długi', 'Nieplanowane'],
+		subcategories: [
+			'Prezenty',
+			'Długi',
+			'Nieplanowane',
+			'Fryzjer',
+			'Kosmetyki',
+			'Rozwój',
+		],
 	},
 	Savings: {
 		value: 'Oszczędności',
