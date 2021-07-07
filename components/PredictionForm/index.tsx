@@ -48,10 +48,11 @@ const categories = expensesCategoriesArray.map((category) => category.toLowerCas
 export function PredictionsForm() {
 	const [newPeriod, setNewPeriod] = useState(format(new Date(), 'yyyy-MM'));
 
+	const [total, setTotal] = useState(0);
+
 	const { isSuccess, isLoading, isError, data, error, refetch } = useQuery(
 		['filteredExpenses', { status: 'active', newPeriod }],
 		() => {
-			console.log('fetching new data..');
 			return getFilteredPredictions({ filter: 'period', value: newPeriod });
 		}
 	);
@@ -63,8 +64,6 @@ export function PredictionsForm() {
 	const updateMutation = useMutation((prediction: IPrediction) =>
 		updatePrediction(prediction)
 	);
-
-	useEffect(() => console.log(data), [data]);
 
 	const formik = useFormik({
 		enableReinitialize: true,
@@ -85,6 +84,32 @@ export function PredictionsForm() {
 			}
 		},
 	});
+
+	useEffect(() => {
+		if (isSuccess && data.length) {
+			const predictions = formik.values;
+			const predictionsKeys = Object.keys(predictions);
+			const predictionsWithoutDate = predictionsKeys.filter(
+				(key) => key !== 'period'
+			);
+
+			const totalPredictionsValue = predictionsWithoutDate.reduce(
+				(acc, currentKey) => {
+					const currentValue = predictions[currentKey];
+					if (!Number.isNaN(Number(currentValue))) {
+						return acc + Number(predictions[currentKey]);
+					}
+
+					return acc;
+				},
+				0
+			);
+
+			if (total !== totalPredictionsValue) {
+				setTotal(totalPredictionsValue);
+			}
+		}
+	}, Object.values(formik?.values));
 
 	const styles = useStyles();
 
@@ -124,6 +149,7 @@ export function PredictionsForm() {
 
 		return (
 			<main>
+				<p>Total: {total}</p>
 				<form onSubmit={formik.handleSubmit} className={styles.form}>
 					<Grid
 						container
@@ -148,7 +174,6 @@ export function PredictionsForm() {
 											format(date, 'yyyy-MM')
 										);
 
-										console.log('setting new date');
 										setNewPeriod(format(date, 'yyyy-MM'));
 									}}
 									error={
