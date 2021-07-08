@@ -86,28 +86,21 @@ export function PredictionsForm() {
 	});
 
 	useEffect(() => {
-		if (isSuccess && data.length) {
-			const predictions = formik.values;
-			const predictionsKeys = Object.keys(predictions);
-			const predictionsWithoutDate = predictionsKeys.filter(
-				(key) => key !== 'period'
-			);
+		const predictions = formik.values;
+		const predictionsKeys = Object.keys(predictions);
+		const predictionsWithoutDate = predictionsKeys.filter((key) => key !== 'period');
 
-			const totalPredictionsValue = predictionsWithoutDate.reduce(
-				(acc, currentKey) => {
-					const currentValue = predictions[currentKey];
-					if (!Number.isNaN(Number(currentValue))) {
-						return acc + Number(predictions[currentKey]);
-					}
-
-					return acc;
-				},
-				0
-			);
-
-			if (total !== totalPredictionsValue) {
-				setTotal(totalPredictionsValue);
+		const totalPredictionsValue = predictionsWithoutDate.reduce((acc, currentKey) => {
+			const currentValue = predictions[currentKey];
+			if (!Number.isNaN(Number(currentValue))) {
+				return acc + Number(predictions[currentKey]);
 			}
+
+			return acc;
+		}, 0);
+
+		if (total !== totalPredictionsValue) {
+			setTotal(totalPredictionsValue);
 		}
 	}, Object.values(formik?.values));
 
