@@ -2,13 +2,13 @@ import { Grid, TextField } from '@material-ui/core';
 import { TextFieldProps } from '@material-ui/core/TextField/TextField';
 
 import ExpensesCategories, {
-	TCategoriesValues,
+	TExpensesCategoriesValues,
 } from '../../../constanst/ExpensesCategories';
 
 import { renderMenuItem } from '../utils/renderMenuItem';
 
 type TSubcategoryFieldProps = {
-	categoryValue: TCategoriesValues;
+	categoryValue: TExpensesCategoriesValues;
 } & TextFieldProps;
 
 export function SubcategoryField(props: TSubcategoryFieldProps) {
