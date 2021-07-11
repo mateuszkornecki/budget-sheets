@@ -1,18 +1,164 @@
 import Head from 'next/head';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import { CircularProgress, TableFooter } from '@material-ui/core';
+
 import { PageLayout } from '../components/PageLayout';
 import { Title } from '../components/Title';
+import { TExpensesCategoriesValues } from '../constanst/ExpensesCategories';
+import { PaperProps } from '@material-ui/core/Paper/Paper';
+import { useQuery } from 'react-query';
+import { getFilteredPredictions } from '../api/predictions';
+import { format } from 'date-fns';
+import { getFilteredExpenses } from '../api/expenses';
+
+function strToFirstUpperCase(str: string) {
+	return str[0].toUpperCase() + str.slice(1);
+}
+
+function TablePaper(props: PaperProps) {
+	return <Paper {...props} elevation={0} variant='outlined' />;
+}
+
+function createData(category: string, expense: number, prediction: number) {
+	return { category, expense, prediction };
+}
+
+function getTotals(tableData: TTableData[]) {
+	return tableData.reduce(
+		(acc, curr) => {
+			return {
+				prediction: acc['prediction'] + Number(curr.prediction),
+				expense: acc['expense'] + Number(curr.expense),
+			};
+		},
+		{ prediction: 0, expense: 0 }
+	);
+}
+
+type TTableData = {
+	category: string;
+	prediction: number;
+	expense: number;
+};
+
+type TProps = {
+	tableData: TTableData[];
+	isLoading: boolean;
+};
+
+function StatsTable(props: TProps) {
+	const { tableData, isLoading } = props;
+
+	const rows = tableData.map((data) =>
+		createData(data.category, data.expense, data.prediction)
+	);
+
+	const totals = getTotals(tableData);
+
+	return (
+		<TableContainer component={TablePaper}>
+			<Table stickyHeader aria-label='stats table'>
+				<TableHead>
+					<TableRow>
+						<TableCell>Category</TableCell>
+						<TableCell align={'right'}>Expense</TableCell>
+						<TableCell align={'right'}>Prediction</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{rows.length === 0 ? (
+						<TableRow>
+							<TableCell>
+								{isLoading ? (
+									<CircularProgress />
+								) : (
+									'Oops, there is no data to display'
+								)}
+							</TableCell>
+							<TableCell> </TableCell>
+							<TableCell> </TableCell>
+						</TableRow>
+					) : (
+						rows.map((row) => (
+							<TableRow key={row.category}>
+								<TableCell component='th' scope='row'>
+									{row.category}
+								</TableCell>
+								<TableCell align='right'>{row.expense}</TableCell>
+								<TableCell align='right'>{row.prediction}</TableCell>
+							</TableRow>
+						))
+					)}
+				</TableBody>
+				<TableFooter>
+					<TableRow>
+						<TableCell component='th'>Total</TableCell>
+						<TableCell align='right'>{totals.expense}</TableCell>
+						<TableCell align='right'>{totals.prediction}</TableCell>
+					</TableRow>
+				</TableFooter>
+			</Table>
+		</TableContainer>
+	);
+}
 
 function StatsPage() {
-	// const { isLoading, isError, data, error } = useQuery('filteredExpenses', () =>
-	// 	getFilteredExpenses({ filter: 'createdAt', value: '2021-05' })
-	// );
+	const [newPeriod, setNewPeriod] = useState(format(new Date(), 'yyyy-MM'));
 
-	// const content = isLoading ? (
-	// 	<p>Loading...</p>
-	// ) : (
-	// 	data.map((expense) => <p>{expense.createdAt}</p>)
-	// );
+	const predictionRes = useQuery(
+		['filteredPredictions', { status: 'active', newPeriod }],
+		() => {
+			return getFilteredPredictions({ filter: 'period', value: newPeriod });
+		}
+	);
+
+	const expensesRes = useQuery(
+		['filteredExpenses', { status: 'active', newPeriod }],
+		() => {
+			return getFilteredExpenses({ filter: 'date', value: newPeriod });
+		}
+	);
+
+	const hasData =
+		predictionRes.isSuccess &&
+		expensesRes.isSuccess &&
+		predictionRes.data.length &&
+		expensesRes.data.length;
+
+	function createTableData(predictions, expensesArr): TTableData[] {
+		const predictionsKeys = Object.keys(predictions);
+
+		const expenses = expensesArr.reduce((acc, curr) => {
+			if (!acc[curr.category]) {
+				return {
+					...acc,
+					[curr.category]: Number(curr.price),
+				};
+			} else {
+				return {
+					...acc,
+					[curr.category]: acc[curr.category] + Number(curr.price),
+				};
+			}
+		}, {});
+
+		const categories = predictionsKeys.filter((category) => category !== 'period');
+
+		return categories.map((category) => {
+			return {
+				category: category,
+				prediction: Number(predictions[category]),
+				expense: Number(expenses[strToFirstUpperCase(category)]) || 0,
+			};
+		});
+	}
 
 	return (
 		<Fragment>
@@ -23,7 +169,17 @@ function StatsPage() {
 			</Head>
 			<PageLayout>
 				<Title title={'Stats'} />
-				<main>todo</main>
+				<main>
+					<p>Period: {newPeriod}</p>
+					<StatsTable
+						isLoading={expensesRes.isLoading || predictionRes.isLoading}
+						tableData={
+							hasData
+								? createTableData(predictionRes.data[0], expensesRes.data)
+								: []
+						}
+					/>
+				</main>
 			</PageLayout>
 		</Fragment>
 	);
