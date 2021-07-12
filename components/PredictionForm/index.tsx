@@ -51,7 +51,7 @@ export function PredictionsForm() {
 	const [total, setTotal] = useState(0);
 
 	const { isSuccess, isLoading, isError, data, error, refetch } = useQuery(
-		['filteredExpenses', { status: 'active', newPeriod }],
+		['filteredPredictions', { status: 'active', newPeriod }],
 		() => {
 			return getFilteredPredictions({ filter: 'period', value: newPeriod });
 		}

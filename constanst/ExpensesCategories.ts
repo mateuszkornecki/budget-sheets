@@ -48,7 +48,8 @@ const expensesCategoriesArray = Object.values(ExpensesCategories).map(
 	(category) => category.value
 );
 
-export type TCategoriesValues = typeof expensesCategoriesArray[number];
+export type TExpensesCategories = typeof ExpensesCategories;
+export type TExpensesCategoriesValues = typeof expensesCategoriesArray[number];
 
 function getExpenseSubcategory(category: keyof typeof ExpensesCategories) {
 	return ExpensesCategories[category].subcategories;
